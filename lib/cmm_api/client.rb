@@ -30,7 +30,15 @@ module CmmApi
 
     def get(*args)
       response = self.class.get *args
-      response.is_a?(String) ? JSON.parse(response) : response
+      response = response.is_a?(String) ? JSON.parse(response) : response
+      if response['errors']
+        error_msg = "Error Response from API:\n"
+        response['errors'].each do |error|
+          error_msg << "  #{error['message']} (code #{error['code']})\n"
+        end
+        raise error_msg
+      end
+      response
     end
 
   end
