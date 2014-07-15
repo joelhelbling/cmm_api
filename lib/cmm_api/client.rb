@@ -4,6 +4,8 @@ require 'pry'
 module CmmApi
   class Client
     include HTTParty
+    format :json
+    headers 'Accept' => 'application/json'
     base_uri 'api.covermymeds.com'
 
     def initialize(api_id: nil, version: nil)
@@ -29,16 +31,15 @@ module CmmApi
     end
 
     def get(*args)
-      response = self.class.get *args
-      response = response.is_a?(String) ? JSON.parse(response) : response
-      if response['errors']
-        error_msg = "Error Response from API:\n"
-        response['errors'].each do |error|
-          error_msg << "  #{error['message']} (code #{error['code']})\n"
+      (self.class.get *args).tap do |response|
+        if response['errors']
+          error_msg = "Error Response from API:\n"
+          response['errors'].each do |error|
+            error_msg << "  #{error['message']} (code #{error['code']})\n"
+          end
+          raise error_msg
         end
-        raise error_msg
       end
-      response
     end
 
   end
