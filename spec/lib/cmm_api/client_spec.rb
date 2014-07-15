@@ -40,9 +40,10 @@ module CmmApi
 
       describe '#request_pages' do
         let(:id) { 'PF6FK9' }
+        let(:token_id) { 'gq9vmqai2mkwewv1y55x' }
 
         it 'retrieves PA request forms' do
-          options = { id: id }
+          options = { id: id, token_id: token_id }
           expect(subject.request_pages(options)['request_page']['forms']).not_to be_nil
         end
       end

@@ -18,8 +18,8 @@ module CmmApi
       get "/requests/#{id}", query(token_id: token_id)
     end
 
-    def request_pages(id: nil)
-      get "/request-pages/#{id}", query
+    def request_pages(id: nil, token_id: nil)
+      get "/request-pages/#{id}", query(token_id: token_id)
     end
 
     private
