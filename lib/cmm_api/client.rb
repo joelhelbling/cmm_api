@@ -6,9 +6,9 @@ module CmmApi
     include HTTParty
     format :json
     headers 'Accept' => 'application/json'
-    base_uri 'api.covermymeds.com'
 
-    def initialize(api_id: nil, version: nil)
+    def initialize(api_id: nil, version: nil, target_uri: 'api.covermymeds.com')
+      self.class.base_uri target_uri
       @base_json = { api_id: api_id, v: version }
     end
 
@@ -24,11 +24,18 @@ module CmmApi
       get "/request-pages/#{id}", query(token_id: token_id)
     end
 
-    def save_request_pages(action={}, form_data={})
+    def send_request_pages(action={}, form_data={})
       token_id = action['href'].match(/token_id=([^&]*)/)[1]
       encoded_auth = Base64.encode64 "#{@base_json['api_id']}:#{token_id}"
       auth_header = { 'Authorization' => "Bearer #{encoded_auth}" }
-      put action['href'], { body: @base_json.merge(form_data), options: { headers: auth_header } }
+      if action['method'] == 'GET'
+        get action['href'], @base_json
+      else
+        put action['href'], {
+          body: @base_json.merge(form_data),
+          options: { headers: auth_header }
+        }
+      end
     end
 
     private

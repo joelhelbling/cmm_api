@@ -48,11 +48,11 @@ module CmmApi
         end
       end
 
-      describe '#save_request_pages' do
+      describe '#send_request_pages' do
         let(:id) { 'PF6FK9' }
         let(:token_id) { 'gq9vmqai2mkwewv1y55x' }
-        let(:options_for_get) { { id: id, token_id: token_id } }
-        let(:request_page) { subject.request_pages(options_for_get) }
+        let(:options_for_request) { { id: id, token_id: token_id } }
+        let(:request_page) { subject.request_pages(options_for_request) }
         let(:form_data) { { token_id: token_id, patient_fname: 'Susan' } }
         let(:action) do
           request_page['request_page']['actions'].select do |action|
@@ -61,7 +61,7 @@ module CmmApi
         end
 
         it 'submits the PA request form' do
-          expect(subject.save_request_pages(action, form_data)).not_to be_nil
+          expect(subject.send_request_pages(action, form_data)).not_to be_nil
         end
       end
     end
