@@ -25,15 +25,13 @@ module CmmApi
     end
 
     def send_request_pages(action={}, form_data={})
-      token_id = action['href'].match(/token_id=([^&]*)/)[1]
-      encoded_auth = Base64.encode64 "#{@base_json['api_id']}:#{token_id}"
-      auth_header = { 'Authorization' => "Bearer #{encoded_auth}" }
       if action['method'] == 'GET'
+        # does this reference the form?  Send form_data?
         get action['href'], query
       else
         put action['href'], {
-          body: @base_json.merge(form_data),
-          options: { headers: auth_header }
+          query: { api_id: @base_json['api_id']},
+          body: @base_json.merge(form_data)
         }
       end
     end
