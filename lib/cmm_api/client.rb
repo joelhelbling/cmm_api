@@ -29,7 +29,7 @@ module CmmApi
       encoded_auth = Base64.encode64 "#{@base_json['api_id']}:#{token_id}"
       auth_header = { 'Authorization' => "Bearer #{encoded_auth}" }
       if action['method'] == 'GET'
-        get action['href'], @base_json
+        get action['href'], query
       else
         put action['href'], {
           body: @base_json.merge(form_data),
@@ -40,17 +40,24 @@ module CmmApi
 
     private
 
-    def query(options = {})
-      { query: @base_json.merge(options) }
+    def query(options = {}, base_query = '')
+      base_options = {}
+      base_query.split(/\&/).each do |pair|
+        k,v = pair.split(/=/)
+        base_options[k] = v
+      end
+      { query: @base_json.merge(base_options).merge(options) }
     end
 
     def get(*args)
+      puts "GET ARGS: #{args.inspect}"
       (self.class.get *args).tap do |response|
         guard_errors response
       end
     end
 
     def put(*args)
+      puts "PUT ARGS: #{args.inspect}"
       (self.class.put *args).tap do |response|
         guard_errors response
       end
